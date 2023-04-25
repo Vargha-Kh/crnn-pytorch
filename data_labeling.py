@@ -13,14 +13,14 @@ def reading_data():
 
 
 def renaming_files(data, img_dir):
-    for i, img in enumerate(data):
+    for i, img in enumerate(img_dir):
         try:
-            # [image for img in ]
-            if img[0] == str(img_dir[i].split('/')[-1]):
-                plates = img[1]
+            if data[i][0] == str(img.split('/')[-1]):
+                plates = data[i][1]
                 before = img_dir[i]
                 after = "./plates/" + str(i) + '_' + plates + '.jpg'
                 shutil.copy(before, after)
+                print(i)
         except IndexError as e:
             print(e)
             continue
