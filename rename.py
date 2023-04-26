@@ -1,6 +1,7 @@
 import os
 import csv
 import shutil
+import persian
 
 # Path to the directory containing the files to be renamed
 directory_path = "./NR"
@@ -19,14 +20,14 @@ with open(label_file_path, "r") as label_file:
         try:
             # Get the old and new file names from the CSV file
             old_name, new_name = row
+            new_name = persian.convert_en_numbers(new_name)
             print(i)
             # Construct the full paths to the old and new files
 
             old_path = os.path.join(directory_path, old_name)
-            new_path = os.path.join(directory_path, new_name + '.jpg')
+            new_path = os.path.join(output_path, new_name + '.jpg')
             print(old_path, new_path)
             # Rename the file
-            # os.rename(old_path, new_path)
             shutil.copy(old_path, new_path)
         except Exception as e:
             print(e)
