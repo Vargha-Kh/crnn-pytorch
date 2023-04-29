@@ -2,12 +2,13 @@ import os
 from argparse import ArgumentParser
 from os.path import join
 from os.path import split
+
 import albumentations
 import cv2
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from deep_utils import split_extension, log_print
+from deep_utils import split_extension
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
@@ -46,16 +47,16 @@ class CRNNDataset(Dataset):
                         paths.append(img_path)
                         labels_length.append(len(label))
                     else:
-                        log_print(logger, f"[Warning] text for sample: {img_path} is invalid. Skipping...")
+                        print(f"[Warning] text for sample: {img_path} is invalid. Skipping...")
                         discards += 1
                 else:
-                    log_print(logger, f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
+                    print(f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
                     discards += 1
             except:
-                log_print(logger, f"[Warning] sample: {img_path} is not valid. Skipping...")
+                print(f"[Warning] sample: {img_path} is not valid. Skipping...")
                 discards += 1
         assert len(labels) == len(paths)
-        log_print(logger, f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
+        print(f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
 
         return paths, labels, labels_length
 
