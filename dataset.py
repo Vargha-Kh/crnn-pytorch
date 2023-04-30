@@ -8,7 +8,7 @@ import cv2
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from deep_utils import split_extension
+from deep_utils import split_extension, log_print
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
@@ -40,23 +40,24 @@ class CRNNDataset(Dataset):
             try:
                 if split_extension(img_name)[-1].lower() in ['.jpg', '.png', '.jpeg']:
                     text = CRNNDataset.get_label(img_path)
-                    is_valid = CRNNDataset.check_validity(text, chars)
+                    is_valid, character = CRNNDataset.check_validity(text, chars)
                     if is_valid:
                         label = CRNNDataset.text2label(chars2label, text)
                         labels.append(label)
                         paths.append(img_path)
                         labels_length.append(len(label))
                     else:
-                        print(f"[Warning] text for sample: {img_path} is invalid. Skipping...")
+                        log_print(logger,
+                                  f"[Warning] text for sample: {img_path} is invalid because of the following character: {character}")
                         discards += 1
                 else:
-                    print(f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
+                    log_print(logger, f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
                     discards += 1
             except:
-                print(f"[Warning] sample: {img_path} is not valid. Skipping...")
+                log_print(logger, f"[Warning] sample: {img_path} is not valid. Skipping...")
                 discards += 1
         assert len(labels) == len(paths)
-        print(f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
+        log_print(logger, f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
 
         return paths, labels, labels_length
 
@@ -71,7 +72,7 @@ class CRNNDataset(Dataset):
             img = np.array(Image.open(img_path))[..., :3]
             img = self.transform(image=img)['image'][0:1, ...].unsqueeze(0)  # albumentation
         else:
-            img = Image.fromarray(np.array(Image.open(img_path))[..., :3])   # This is used for transformers
+            img = Image.fromarray(np.array(Image.open(img_path))[..., :3])  # This is used for transformers
             img = self.transform(img).unsqueeze(0)  # torch transformers
         label = torch.LongTensor(self.labels[index]).unsqueeze(0)
         label_length = torch.LongTensor([self.labels_length[index]]).unsqueeze(0)
@@ -87,8 +88,8 @@ class CRNNDataset(Dataset):
     def check_validity(text, chars):
         for c in text:
             if c not in chars:
-                return False
-        return True
+                return False, c
+        return True, None
 
     @staticmethod
     def collate_fn(batch):
