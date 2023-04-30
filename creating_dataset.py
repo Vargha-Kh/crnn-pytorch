@@ -1,8 +1,5 @@
 import os
 import csv
-import glob
-import random
-import math
 import shutil
 import persian
 
@@ -52,7 +49,7 @@ def renaming_label_file_csv(label_file_path="List.csv", directory_path="./NR", o
             try:
                 # Get the old and new file names from the CSV file
                 old_name, new_name = row
-                new_name = persian.convert_en_numbers(new_name)
+                new_name = persian.convert_en_numbers(new_name.replace(" ", ""))
 
                 # Construct the full paths to the old and new files
                 old_path = os.path.join(directory_path, old_name)
@@ -72,7 +69,9 @@ if __name__ == "__main__":
     output_path = "./plates"
     # Path to the CSV label file
     label_file_path = "List.csv"
-    # renaming_label_file_csv(label_file_path, directory_path, output_path)
+
+    # Labeling image files
+    renaming_label_file_csv(label_file_path, directory_path, output_path)
 
     # Splitting datasets
     dir_train_test_split(output_path, "./datasets")
