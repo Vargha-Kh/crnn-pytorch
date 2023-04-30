@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import torch
 import pytorch_lightning as pl
-from deep_utils import mkdir_incremental, CRNNModelTorch, get_logger, TorchUtils, visualize_data_loader
+from deep_utils import mkdir_incremental, CRNNModelTorch, TorchUtils
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from dataset import CRNNDataset
 from settings import Config
@@ -126,25 +126,18 @@ def main():
     config.update_config_param(args)
 
     output_dir = mkdir_incremental(config.output_dir)
-    logger = get_logger("pytorch-lightning-image-classification", log_path=output_dir / "log.log")
+    #logger = get_logger("pytorch-lightning-image-classification", log_path=output_dir / "log.log")
     early_stopping = EarlyStopping(monitor='val_loss', patience=config.early_stopping_patience)
     model_checkpoint = ModelCheckpoint(dirpath=output_dir, filename=config.file_name, monitor="val_loss",
                                        verbose=True)
     learning_rate_monitor = LearningRateMonitor(logging_interval="epoch")
-    trainer = pl.Trainer(gpus=1 if config.device == "cuda" else 0,
-                         max_epochs=config.epochs,
+    trainer = pl.Trainer(max_epochs=config.epochs,
                          min_epochs=config.epochs // 10,
                          callbacks=[early_stopping, model_checkpoint, learning_rate_monitor],
                          default_root_dir=output_dir)
     lit_crnn = LitCRNN(config.img_h, config.n_channels, config.n_classes, config.n_hidden, config.lstm_input, config.lr,
                        config.lr_reduce_factor, config.lr_patience, config.min_lr)
     train_loader, val_loader = lit_crnn.get_loaders(config)
-    if args.visualize:
-        print("[INFO] Visualizing train-loader")
-        visualize_data_loader(train_loader, mean=config.mean, std=config.std)
-        print("[INFO] Visualizing val-loader")
-        visualize_data_loader(val_loader, mean=config.mean, std=config.std)
-        exit(0)
 
     trainer.fit(model=lit_crnn, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
@@ -153,7 +146,7 @@ def main():
 
     # Adding artifacts to weights
     weight_path = output_dir / f"{config.file_name}.ckpt"
-    TorchUtils.save_config_to_weight(weight_path, config, logger)
+    TorchUtils.save_config_to_weight(weight_path, config)
 
 
 if __name__ == '__main__':
