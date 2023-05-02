@@ -111,13 +111,13 @@ def main():
                         help="path to the dataset, default: ./dataset")
     parser.add_argument("--output_dir", type=Path, default="./output",
                         help="path to the output directory, default: ./output")
-    parser.add_argument("--epochs", type=int, default=100, help="number of training epochs")
+    parser.add_argument("--epochs", type=int, default=50, help="number of training epochs")
     parser.add_argument("--device", default="cuda", help="what should be the device for training, default is cuda")
     parser.add_argument("--mean", nargs="+", type=float, default=[0.4845], help="dataset channel-wise mean")
     parser.add_argument("--std", nargs="+", type=float, default=[0.1884], help="dataset channel-wise std")
     parser.add_argument("--img_w", type=int, default=100, help="dataset img width size")
     parser.add_argument("--n_workers", type=int, default=8, help="number of workers used for dataset collection")
-    parser.add_argument("--batch_size", type=int, default=128, help="batch size number")
+    parser.add_argument("--batch_size", type=int, default=256, help="batch size number")
     parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹',
                         help="alphabets used in the process")
     parser.add_argument("--visualize", action="store_true", help="Visualize data-loader")
@@ -126,7 +126,7 @@ def main():
     config.update_config_param(args)
 
     output_dir = mkdir_incremental(config.output_dir)
-    #logger = get_logger("pytorch-lightning-image-classification", log_path=output_dir / "log.log")
+  #logger = get_logger("pytorch-lightning-image-classification", log_path=output_dir / "log.log")
     early_stopping = EarlyStopping(monitor='val_loss', patience=config.early_stopping_patience)
     model_checkpoint = ModelCheckpoint(dirpath=output_dir, filename=config.file_name, monitor="val_loss",
                                        verbose=True)
@@ -138,6 +138,12 @@ def main():
     lit_crnn = LitCRNN(config.img_h, config.n_channels, config.n_classes, config.n_hidden, config.lstm_input, config.lr,
                        config.lr_reduce_factor, config.lr_patience, config.min_lr)
     train_loader, val_loader = lit_crnn.get_loaders(config)
+    if args.visualize:
+        print("[INFO] Visualizing train-loader")
+      #  visualize_data_loader(train_loader, mean=config.mean, std=config.std)
+        print("[INFO] Visualizing val-loader")
+     #   visualize_data_loader(val_loader, mean=config.mean, std=config.std)
+        exit(0)
 
     trainer.fit(model=lit_crnn, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
