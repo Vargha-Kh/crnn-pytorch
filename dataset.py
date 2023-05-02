@@ -56,7 +56,7 @@ class CRNNDataset(Dataset):
                 print(f"[Warning] sample: {img_path} is not valid. Skipping...")
                 discards += 1
         assert len(labels) == len(paths)
-        log_print(logger, f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
+        print(f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
 
         return paths, labels, labels_length
 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--dataset_dir", help="path to dataset")
     parser.add_argument("--batch_size", default=128)
-    parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹', help="alphabets used in dataset")
+    parser.add_argument("--alphabets", default='ابتثجحدذرزسشصطظعغـفقلمنهويپچکگی۰۱۲۳۴۵۶۷۸۹‍', help="alphabets used in dataset")
     parser.add_argument("--img_h", default=32, type=int)
     parser.add_argument("--img_w", default=100, type=int)
     args = parser.parse_args()
