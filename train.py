@@ -131,7 +131,7 @@ def main():
     model_checkpoint = ModelCheckpoint(dirpath=output_dir, filename=config.file_name, monitor="val_loss",
                                        verbose=True)
     learning_rate_monitor = LearningRateMonitor(logging_interval="epoch")
-    trainer = pl.Trainer(max_epochs=config.epochs,
+    trainer = pl.Trainer(gpus=1, max_epochs=config.epochs,
                          min_epochs=config.epochs // 10,
                          callbacks=[early_stopping, model_checkpoint, learning_rate_monitor],
                          default_root_dir=output_dir)
