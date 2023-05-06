@@ -13,24 +13,29 @@ pip install -r requirements.txt
 ```
 
 ## Dataset
-
 Before training the model, it's a good practice to calculate the `mean` and `std` of the input dataset and therefore
-normalize the model using proper values instead of merely normalizing with magical `0.5`. Before diving into the code
-make sure that the dataset has the following characters:
+normalize the model using proper values instead of merely normalizing with magical `0.5`. 
+
+```commandline
+python creating_dataset.py
+```
+
+You can also use the images in the datasets.zip (Amirkabir University Plates Datasets) in NR directory and config the dataset using creating_dataset.py code and List.csv labels. Make sure that the dataset has the following structure for training:
 
 ```commandline
 ├── data-dir
 │   ├── train
-│   │  ├──<index_01>_<text>.jpg
-│   │  ├──<index_02>_<text>.jpg
+│   │  ├──<plate>.jpg
+│   │  ├──<plate>.jpg
 │   │  ├──...
 │   ├── val
-│   │  ├──<index_01>_<text>.jpg
-│   │  ├──<index_02>_<text>.jpg
+│   │  ├──<plate>.jpg
+│   │  ├──<plate>.jpg
 ...
 ```
 
 **NOTE:** Only `.jpg`, `.png`, and `.jpeg` extensions are supported!
+
 
 Then checkout the `alphabets.py` module. It contains the alphabets characters that are required for training.
 If the existing alphabets do not meet your requirements create a new dictionary containing your required alphabets and
@@ -91,6 +96,8 @@ or
 python train.py --img_w 100 --n_workers 8 --train_directory <your-trian-dir> --val_directory <your-val-dir> --mean 0.4845 --std 0.1884 --alphabets ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹ 
 ```
 
+- Note: For training in colab workspace you should update your pytorch-lightning pypi package then reinstall the 1.9.0 version.
+
 To see all the configs:
 ```commandline
 python train.py -h
@@ -141,10 +148,6 @@ https://ceit.aut.ac.ir/~keyvanrad/download/ML971/project/
 
 Password: ML971Data
 
-### Foot-Notes:
-1. For labeling tool checkout my project:
-https://github.com/pooya-mohammadi/ocr-labeling-tool
-   
 
 # References
 
