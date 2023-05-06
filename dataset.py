@@ -2,13 +2,12 @@ import os
 from argparse import ArgumentParser
 from os.path import join
 from os.path import split
-
 import albumentations
 import cv2
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from deep_utils import split_extension, log_print
+from deep_utils import split_extension
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
@@ -47,17 +46,16 @@ class CRNNDataset(Dataset):
                         paths.append(img_path)
                         labels_length.append(len(label))
                     else:
-                        log_print(logger,
-                                  f"[Warning] text for sample: {img_path} is invalid because of the following character: {character}")
+                        print(f"[Warning] text for sample: {img_path} is invalid because of the following character: {character}")
                         discards += 1
                 else:
-                    log_print(logger, f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
+                    print(f"[Warning] sample: {img_path} does not have a valid extension. Skipping...")
                     discards += 1
             except:
-                log_print(logger, f"[Warning] sample: {img_path} is not valid. Skipping...")
+                print(f"[Warning] sample: {img_path} is not valid. Skipping...")
                 discards += 1
         assert len(labels) == len(paths)
-        log_print(logger, f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
+        print(f"Successfully gathered {len(labels)} samples and discarded {discards} samples!")
 
         return paths, labels, labels_length
 
@@ -82,7 +80,6 @@ class CRNNDataset(Dataset):
     @staticmethod
     def get_label(img_path):
         label = split_extension(split(img_path)[-1])[0]
-        label = label.split('_')[-1]
         return label
 
     @staticmethod
@@ -132,7 +129,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--dataset_dir", help="path to dataset")
     parser.add_argument("--batch_size", default=128)
-    parser.add_argument("--alphabets", default='ابپتشثجدزسصطعفقکگلمنوهی+۰۱۲۳۴۵۶۷۸۹', help="alphabets used in dataset")
+    parser.add_argument("--alphabets", default='ابتثجحدذرزسشصطظعغـفقلمنهويپچکگی۰۱۲۳۴۵۶۷۸۹‍', help="alphabets used in dataset")
     parser.add_argument("--img_h", default=32, type=int)
     parser.add_argument("--img_w", default=100, type=int)
     args = parser.parse_args()
