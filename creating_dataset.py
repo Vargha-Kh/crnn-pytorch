@@ -22,6 +22,9 @@ def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_o
 def dir_train_test_split(in_dir, out_dir, test_size=0.3, result_names=('train', 'val'), mode='cp',
                          remove_out_dir=False):
     from sklearn.model_selection import train_test_split
+    # Checking whether the out_dir is made or not
+    if not os.path.isdir(out_dir):
+        os.makedirs(out_dir)
     list_ = os.listdir(in_dir)
     train_name, val_name = train_test_split(list_, test_size=test_size)
     transfer_directory_items(in_dir,
