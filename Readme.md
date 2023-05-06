@@ -20,7 +20,7 @@ normalize the model using proper values instead of merely normalizing with magic
 python creating_dataset.py
 ```
 
-You can also use the images in the datasets.zip (Amirkabir University Plates Datasets) in NR directory and config the dataset using creating_dataset.py code and List.csv labels. Make sure that the dataset has the following structure for training:
+You can also use the images in the datasets.zip (Amirkabir University Plates Datasets) and put it in NR directory without the dataset configuration using creating_dataset.py code and List.csv labels. Make sure that the dataset has the following structure for training:
 
 ```commandline
 ├── data-dir
