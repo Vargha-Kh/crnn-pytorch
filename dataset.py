@@ -80,6 +80,7 @@ class CRNNDataset(Dataset):
     @staticmethod
     def get_label(img_path):
         label = split_extension(split(img_path)[-1])[0]
+        label = label.split('_')[-1]
         return label
 
     @staticmethod

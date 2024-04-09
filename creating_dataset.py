@@ -19,7 +19,7 @@ def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_o
     print(f'finished copying/moving from {in_dir} to {out_dir}')
 
 
-def dir_train_test_split(in_dir, out_dir, test_size=0.3, result_names=('train', 'val'), mode='cp',
+def dir_train_test_split(in_dir, out_dir, test_size=0.25, result_names=('train', 'val'), mode='cp',
                          remove_out_dir=False):
     from sklearn.model_selection import train_test_split
     # Checking whether the out_dir is made or not
@@ -52,11 +52,11 @@ def renaming_label_file_csv(label_file_path="List.csv", directory_path="./NR", o
             try:
                 # Get the old and new file names from the CSV file
                 old_name, new_name = row
-                new_name = persian.convert_en_numbers(new_name.replace(" ", ""))
+                # new_name = persian.convert_en_numbers(new_name.replace(" ", ""))
 
                 # Construct the full paths to the old and new files
                 old_path = os.path.join(directory_path, old_name)
-                new_path = os.path.join(output_path, new_name + '.jpg')
+                new_path = os.path.join(output_path, old_name)
 
                 print(f"[INFO: {i}] Copying from {old_path} into {new_path}")
                 # Rename the file
@@ -66,12 +66,24 @@ def renaming_label_file_csv(label_file_path="List.csv", directory_path="./NR", o
                 continue
 
 
+def create_csv_labels(directory, csv_filename):
+    with open(csv_filename, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        # csv_writer.writerow(['image_name', 'label'])
+
+        for filename in os.listdir(directory):
+            if filename.endswith('.jpg'):
+                label = filename.split('_')[-1][0:-4]
+                csv_writer.writerow([filename, label])
+
+
 if __name__ == "__main__":
     # set the Path to the directory containing the files to be renamed hardcoded
-    directory_path = "./NR"
-    output_path = "./plates"
+    directory_path = "./mana_ocr"
+    output_path = "./mana_text"
     # Path to the CSV label file
-    label_file_path = "List.csv"
+    label_file_path = 'labels.csv'
+    create_csv_labels(directory_path, label_file_path)
 
     # Labeling image files
     renaming_label_file_csv(label_file_path, directory_path, output_path)
